@@ -3,11 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DemoModule } from './demo/demo.module';
 import { ConfigModule } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
+// import { MongooseModule } from '@nestjs/mongoose';
 import { RedisModule } from './redis/redis.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { ConsumersModule } from './consumers/consumers.module';
 import { LoggerModule } from './logger/logger.module';
+import { MongodbModule } from './mongodb/mongodb.module';
 
 @Module({
   imports: [
@@ -15,16 +16,17 @@ import { LoggerModule } from './logger/logger.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forRoot(
-      (() => {
-        const mongoUri = process.env.MONGODB_URI;
-        if (!mongoUri) {
-          throw new Error('MONGODB_URI environment variable is not defined');
-        }
-        return mongoUri;
-      })(),
-      { connectionName: 'mongodbConnection' },
-    ),
+    // MongooseModule.forRoot(
+    //   (() => {
+    //     const mongoUri = process.env.MONGODB_URI;
+    //     if (!mongoUri) {
+    //       throw new Error('MONGODB_URI environment variable is not defined');
+    //     }
+    //     return mongoUri;
+    //   })(),
+    //   { connectionName: 'mongodbConnection' },
+    // ),
+    MongodbModule,
     RedisModule,
     KafkaModule,
     DemoModule,

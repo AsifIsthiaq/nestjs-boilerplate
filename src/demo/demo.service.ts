@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/mongoose';
+// import { InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model } from 'mongoose';
 import { Demo, DemoSchema } from '../schemas/demo.shema';
 import { CreateDemoDto } from '../dto/create-demo.dto';
@@ -8,19 +8,24 @@ import { RedisDB } from 'src/enums/redis-db.enum';
 import { KafkaService } from 'src/kafka/kafka.service';
 import { DEMO_PRODUCER_TOPIC } from 'src/constants/kafka.constants';
 import { LoggerService } from 'src/logger/logger.service';
+import { MongodbService } from 'src/mongodb/mongodb.service';
 
 @Injectable()
 export class DemoService {
   constructor(
-    @InjectConnection('mongodbConnection')
-    private readonly connection: Connection,
+    // @InjectConnection('mongodbConnection')
+    // private readonly connection: Connection,
+    private readonly mongodbService: MongodbService,
     private readonly redisService: RedisService,
     private readonly kafkaService: KafkaService,
     private readonly logger: LoggerService,
   ) {}
 
   private getModelForDb(dbName: string): Model<Demo> {
-    return this.connection.useDb(dbName).model(Demo.name, DemoSchema);
+    return this.mongodbService
+      .getMongoose()
+      .connection.useDb(dbName)
+      .model(Demo.name, DemoSchema);
   }
 
   async findAll(dbName: string): Promise<Demo[]> {
