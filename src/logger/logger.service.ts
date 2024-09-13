@@ -25,7 +25,9 @@ export class LoggerService {
     return {
       level: this.configService.get<string>('LOG_LEVEL', 'info'),
       format: combine(
-        label({ label: this.configService.get<string>('SERVICE_NAME', 'NESTAPP') }),
+        label({
+          label: this.configService.get<string>('SERVICE_NAME', 'NESTAPP'),
+        }),
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         customFormat,
       ),
