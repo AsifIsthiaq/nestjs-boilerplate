@@ -58,7 +58,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
       await this.producer.connect();
       this.logger.info('Successfully connected to Kafka producer');
     } catch (error) {
-      this.logger.error('Error connecting to Kafka producer');
+      this.logger.error('Error connecting to Kafka producer', error);
       throw new KafkaError('Error connecting to Kafka producer');
     }
   }
@@ -80,6 +80,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
       consumer.connect();
       consumer.subscribe(topics);
       this.consumers.push(consumer);
+      this.logger.info("Successfully connected to Kafka consumer", groupId, topics);
       return consumer;
     } catch (error) {
       throw new KafkaError('Unable to connect to Kafka consumer');
