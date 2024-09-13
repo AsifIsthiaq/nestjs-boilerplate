@@ -16,10 +16,10 @@ import { KafkaError } from 'src/error-handling/kafka.error';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnApplicationShutdown {
-                  private readonly logger = new Logger(KafkaService.name);
-                  private kafka: Kafka;
-                  private producer: Producer;
-                  private readonly consumers: Consumer[] = [];
+  private readonly logger = new Logger(KafkaService.name);
+  private kafka: Kafka;
+  private producer: Producer;
+  private readonly consumers: Consumer[] = [];
 
   constructor(private readonly configService: ConfigService) {}
 
