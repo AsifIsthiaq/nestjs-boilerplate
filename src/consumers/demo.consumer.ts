@@ -33,7 +33,7 @@ export class DemoConsumer implements OnModuleInit {
     } catch (error) {
       this.logger.error(
         `Unable to setup Kafka consumer for topics: ${DEMO_CONSUMER_TOPICS}`,
-        error
+        error,
       );
     }
   }
@@ -93,7 +93,7 @@ export class DemoConsumer implements OnModuleInit {
     } catch (error) {
       this.logger.error(
         `Failed to commit offset for topic: ${topic}, partition: ${partition}`,
-        error
+        error,
       );
       throw new KafkaError(
         `Error committing offset for topic: ${topic}, partition: ${partition}`,
