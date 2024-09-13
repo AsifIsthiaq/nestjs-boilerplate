@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { LoggerService } from './logger/logger.service';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   const configService = app.get(ConfigService);
   const logger = app.get(LoggerService);
