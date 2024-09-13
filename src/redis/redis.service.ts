@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { ConfigService } from '@nestjs/config';
 import { RedisDB } from 'src/enums/redis-db.enum';
@@ -35,7 +35,7 @@ export interface IRedisOperation {
 }
 
 @Injectable()
-export class RedisService implements OnModuleInit, IRedisOperation {
+export class RedisService implements OnModuleInit, OnApplicationShutdown, IRedisOperation {
   private clients: Map<RedisDB, RedisClientType> = new Map();
 
   constructor(
@@ -246,6 +246,17 @@ export class RedisService implements OnModuleInit, IRedisOperation {
       return await client.expire(key, ttl);
     } else {
       throw new RedisError(`No Redis client found for DB ${db}`);
+    }
+  }
+
+  async onApplicationShutdown() {
+    for (const [key, client] of this.clients.entries()) {
+      try {
+        await client.quit();
+        this.logger.info(`Disconnected from Redis DB ${key}`);
+      } catch (error) {
+        this.logger.error(`Error disconnecting from Redis DB ${key}:`, error);
+      }
     }
   }
 }
