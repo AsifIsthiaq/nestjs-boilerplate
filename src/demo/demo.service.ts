@@ -6,6 +6,7 @@ import { CreateDemoDto } from '../dto/create-demo.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { RedisDB } from 'src/enums/redis-db.enum';
 import { KafkaService } from 'src/kafka/kafka.service';
+import { DEMO_PRODUCER_TOPIC } from 'src/constants/kafka.constants';
 
 @Injectable()
 export class DemoService {
@@ -61,7 +62,7 @@ export class DemoService {
   async publish() {
     console.log('create call');
     await this.kafkaService.produce({
-      topic: 'any-api-rnd',
+      topic: DEMO_PRODUCER_TOPIC,
       messages: [
         {
           value: 'this is emplotyee create: ' + Math.floor(Math.random() * 101),
