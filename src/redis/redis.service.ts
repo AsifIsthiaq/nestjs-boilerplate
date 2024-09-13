@@ -1,4 +1,8 @@
-import { Injectable, OnApplicationShutdown, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  OnApplicationShutdown,
+  OnModuleInit,
+} from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { ConfigService } from '@nestjs/config';
 import { RedisDB } from 'src/enums/redis-db.enum';
@@ -35,7 +39,9 @@ export interface IRedisOperation {
 }
 
 @Injectable()
-export class RedisService implements OnModuleInit, OnApplicationShutdown, IRedisOperation {
+export class RedisService
+  implements OnModuleInit, OnApplicationShutdown, IRedisOperation
+{
   private clients: Map<RedisDB, RedisClientType> = new Map();
 
   constructor(
