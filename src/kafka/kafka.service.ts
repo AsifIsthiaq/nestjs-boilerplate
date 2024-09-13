@@ -1,6 +1,5 @@
 import {
   Injectable,
-  Logger,
   OnApplicationShutdown,
   OnModuleInit,
 } from '@nestjs/common';
@@ -13,15 +12,18 @@ import {
   ProducerRecord,
 } from 'kafkajs';
 import { KafkaError } from 'src/error-handling/kafka.error';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class KafkaService implements OnModuleInit, OnApplicationShutdown {
-  private readonly logger = new Logger(KafkaService.name);
   private kafka: Kafka;
   private producer: Producer;
   private readonly consumers: Consumer[] = [];
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: LoggerService,
+  ) {}
 
   async onModuleInit() {
     this.kafka = this.getKafka();
@@ -54,7 +56,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
     try {
       this.producer = this.kafka.producer();
       await this.producer.connect();
-      this.logger.log('Successfully connected to Kafka producer');
+      this.logger.info('Successfully connected to Kafka producer');
     } catch (error) {
       this.logger.error('Error connecting to Kafka producer');
       throw new KafkaError('Error connecting to Kafka producer');
@@ -90,7 +92,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
       for (const consumer of this.consumers) {
         await consumer.disconnect();
       }
-      this.logger.log('Successfully disconnected Kafka');
+      this.logger.info('Successfully disconnected Kafka');
     } catch (error) {
       this.logger.error('Error disconnecting Kafka', error);
     }

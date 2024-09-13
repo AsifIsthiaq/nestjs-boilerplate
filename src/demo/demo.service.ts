@@ -7,6 +7,7 @@ import { RedisService } from 'src/redis/redis.service';
 import { RedisDB } from 'src/enums/redis-db.enum';
 import { KafkaService } from 'src/kafka/kafka.service';
 import { DEMO_PRODUCER_TOPIC } from 'src/constants/kafka.constants';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class DemoService {
@@ -15,6 +16,7 @@ export class DemoService {
     private readonly connection: Connection,
     private readonly redisService: RedisService,
     private readonly kafkaService: KafkaService,
+    private readonly logger: LoggerService,
   ) {}
 
   private getModelForDb(dbName: string): Model<Demo> {
@@ -60,7 +62,7 @@ export class DemoService {
 
   //kafka-test
   async publish() {
-    console.log('create call');
+    this.logger.info('publishing');
     await this.kafkaService.produce({
       topic: DEMO_PRODUCER_TOPIC,
       messages: [

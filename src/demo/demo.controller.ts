@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Query,
@@ -11,12 +10,14 @@ import {
 import { DemoService } from './demo.service';
 import { Demo } from '../schemas/demo.shema';
 import { CreateDemoDto } from '../dto/create-demo.dto';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Controller('v1/demo')
 export class DemoController {
-  private logger = new Logger('TasksController');
-
-  constructor(private readonly demoService: DemoService) {}
+  constructor(
+    private readonly demoService: DemoService,
+    private readonly logger: LoggerService,
+  ) {}
 
   @Get('findAll')
   async findAll(@Query('dbName') dbName: string): Promise<Demo[]> {

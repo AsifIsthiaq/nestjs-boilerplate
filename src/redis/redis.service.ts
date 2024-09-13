@@ -1,8 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { createClient, RedisClientType } from 'redis';
 import { ConfigService } from '@nestjs/config';
 import { RedisDB } from 'src/enums/redis-db.enum';
 import { RedisError } from 'src/error-handling/redis.error';
+import { LoggerService } from 'src/logger/logger.service';
 
 export interface IRedisOperation {
   // String operations
@@ -35,10 +36,12 @@ export interface IRedisOperation {
 
 @Injectable()
 export class RedisService implements OnModuleInit, IRedisOperation {
-  private readonly logger = new Logger(RedisService.name);
   private clients: Map<RedisDB, RedisClientType> = new Map();
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly logger: LoggerService,
+  ) {}
 
   async onModuleInit() {
     await this.initializeClients();
@@ -61,7 +64,7 @@ export class RedisService implements OnModuleInit, IRedisOperation {
         this.clients.set(dbIndex, client);
         this.logger.debug(`Connected to Redis DB ${dbIndex}`);
       }
-      this.logger.log(`Successfully connected to Redis`);
+      this.logger.info(`Successfully connected to Redis`);
     } catch (error) {
       this.logger.error('Error initializing Redis clients', error);
       throw new RedisError('Error initializing Redis clients');

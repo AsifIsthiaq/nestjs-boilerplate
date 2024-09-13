@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Consumer } from 'kafkajs';
 import {
   DEMO_CONSUMER_GROUPID,
@@ -6,17 +6,29 @@ import {
 } from 'src/constants/kafka.constants';
 import { KafkaError } from 'src/error-handling/kafka.error';
 import { KafkaService } from 'src/kafka/kafka.service';
+import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class DemoConsumer implements OnModuleInit {
-  private readonly logger = new Logger(DemoConsumer.name);
-
-  constructor(private readonly kafkaService: KafkaService) {}
+  constructor(private readonly kafkaService: KafkaService,
+    private readonly logger: LoggerService
+  ) {
+    // const list:any= {name:'asif', age:3};
+    // this.logger.info(list)
+    // this.logger.info([1,2,4,5])
+    // this.logger.info("mixed obj", list)
+    // this.logger.info("NO META")
+    // this.logger.info("NO META", "asif", 9, "Ist")
+    // this.logger.info("hello asif", {name:'asif', age:3})
+    // this.logger.info("asif3 list ", [1,23,4]);
+    // this.logger.info("asif3 list ", [1,23,{name:'asif'},'sdas']);
+    // this.logger.info("asif3 list ", [1,23,{name:'asif'},'sdas'], [1,23,{name:'asif'},'sdas'], {name:'asif', age:3},  "ASIFSISS");
+  }
 
   async onModuleInit() {
     try {
       const consumer: Consumer = await this.initializeConsumer();
-      await this.runConsumer(consumer);
+      this.runConsumer(consumer);
     } catch (error) {
       this.logger.error(
         `Unable to setup Kafka consumer for topics: ${DEMO_CONSUMER_TOPICS}`,
@@ -53,11 +65,11 @@ export class DemoConsumer implements OnModuleInit {
   ): Promise<void> {
     const logMessage = {
       source: 'demo-consumer',
-      message: message.value?.toString(),
+      msg: message.value?.toString(),
       partition: partition.toString(),
       topic: topic.toString(),
     };
-    this.logger.log(logMessage);
+    this.logger.info(logMessage);
   }
 
   private async commitOffsets(
@@ -74,7 +86,7 @@ export class DemoConsumer implements OnModuleInit {
           offset: (Number(offset) + 1).toString(),
         },
       ]);
-      this.logger.log(
+      this.logger.info(
         `Committed offset ${(Number(offset) + 1).toString()} for topic: ${topic}, partition: ${partition}`,
       );
     } catch (error) {
@@ -89,7 +101,7 @@ export class DemoConsumer implements OnModuleInit {
   }
 
   private async delay(ms: number): Promise<void> {
-    this.logger.log(`Waiting for ${ms / 1000} seconds`);
+    this.logger.info(`Waiting for ${ms / 1000} seconds`);
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

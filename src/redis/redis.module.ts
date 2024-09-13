@@ -3,7 +3,6 @@ import { RedisService } from './redis.service';
 
 @Global()
 @Module({
-  imports: [],
   providers: [RedisService],
   exports: [RedisService],
 })

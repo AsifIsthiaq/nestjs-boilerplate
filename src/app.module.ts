@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RedisModule } from './redis/redis.module';
 import { KafkaModule } from './kafka/kafka.module';
 import { ConsumersModule } from './consumers/consumers.module';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ConsumersModule } from './consumers/consumers.module';
     KafkaModule,
     DemoModule,
     ConsumersModule,
+    LoggerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
