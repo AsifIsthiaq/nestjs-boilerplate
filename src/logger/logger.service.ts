@@ -5,7 +5,7 @@ import {
   createLogger,
   transports,
   format,
-  Logger as WinstonLogger
+  Logger as WinstonLogger,
 } from 'winston';
 const { combine, timestamp, printf, label } = format;
 
@@ -37,32 +37,40 @@ export class LoggerService {
           ),
         }),
         new transports.Console({
-          format: combine(
-            timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-          ),
+          format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })),
         }),
       ],
     };
   }
 
   public error(msg: any, ...meta: any[]) {
-    this.logger.error(`${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`);
+    this.logger.error(
+      `${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`,
+    );
   }
 
   public warn(msg: any, ...meta: any[]) {
-    this.logger.warn(`${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`);
+    this.logger.warn(
+      `${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`,
+    );
   }
 
   public info(msg: any, ...meta: any[]) {
-    this.logger.info(`${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`);
+    this.logger.info(
+      `${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`,
+    );
   }
 
   public verbose(msg: any, ...meta: any[]) {
-    this.logger.verbose(`${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`);
+    this.logger.verbose(
+      `${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`,
+    );
   }
 
   public debug(msg: any, ...meta: any[]) {
-    this.logger.debug(`${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`);
+    this.logger.debug(
+      `${this.getFormatedMetaStr([msg])} ${this.getFormatedMetaStr(meta)}`,
+    );
   }
 
   private getFormatedMetaStr(meta: any[]): String {

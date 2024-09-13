@@ -10,8 +10,9 @@ import { LoggerService } from 'src/logger/logger.service';
 
 @Injectable()
 export class DemoConsumer implements OnModuleInit {
-  constructor(private readonly kafkaService: KafkaService,
-    private readonly logger: LoggerService
+  constructor(
+    private readonly kafkaService: KafkaService,
+    private readonly logger: LoggerService,
   ) {
     // const list:any= {name:'asif', age:3};
     // this.logger.info(list)
