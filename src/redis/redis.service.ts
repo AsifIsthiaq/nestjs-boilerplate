@@ -45,6 +45,7 @@ export class RedisService implements OnModuleInit, IRedisOperation {
 
   async onModuleInit() {
     await this.initializeClients();
+    this.logger.info(`Successfully connected to Redis`);
   }
 
   private async initializeClients() {
@@ -64,7 +65,6 @@ export class RedisService implements OnModuleInit, IRedisOperation {
         this.clients.set(dbIndex, client);
         this.logger.debug(`Connected to Redis DB ${dbIndex}`);
       }
-      this.logger.info(`Successfully connected to Redis`);
     } catch (error) {
       this.logger.error('Error initializing Redis clients', error);
       throw new RedisError('Error initializing Redis clients');
