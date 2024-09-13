@@ -1,56 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 // import { InjectConnection } from '@nestjs/mongoose';
-import { Connection, Model } from 'mongoose';
-import { Demo, DemoSchema } from '../schemas/demo.shema';
+import { Demo } from '../schemas/demo.shema';
 import { CreateDemoDto } from '../dto/create-demo.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { RedisDB } from 'src/enums/redis-db.enum';
 import { KafkaService } from 'src/kafka/kafka.service';
 import { DEMO_PRODUCER_TOPIC } from 'src/constants/kafka.constants';
 import { LoggerService } from 'src/logger/logger.service';
-import { MongodbService } from 'src/mongodb/mongodb.service';
+import { DemoDaoService } from 'src/dao/demo-dao.service';
 
 @Injectable()
 export class DemoService {
   constructor(
     // @InjectConnection('mongodbConnection')
     // private readonly connection: Connection,
-    private readonly mongodbService: MongodbService,
     private readonly redisService: RedisService,
     private readonly kafkaService: KafkaService,
     private readonly logger: LoggerService,
+    private readonly demoDaoService: DemoDaoService,
   ) {}
 
-  private getModelForDb(dbName: string): Model<Demo> {
-    return this.mongodbService
-      .getMongoose()
-      .connection.useDb(dbName)
-      .model(Demo.name, DemoSchema);
-  }
-
   async findAll(dbName: string): Promise<Demo[]> {
-    const model = this.getModelForDb(dbName);
-    const demos = await model.find().exec();
-    return demos;
+    // const model = this.getModelForDb(dbName);
+    // const demos = await model.find().exec();
+    return await this.demoDaoService.getAll(dbName);
   }
 
   async findById(dbName: string, id: string): Promise<Demo | null> {
-    const model = this.getModelForDb(dbName);
-    const demo = await model.findById(id).exec();
-    if (!demo) throw new NotFoundException('Not found in DB');
-    return demo;
+    // const model = this.getModelForDb(dbName);
+    // const demo = await model.findById(id).exec();
+    // if (!demo) throw new NotFoundException('Not found in DB');
+    return await this.demoDaoService.get(dbName, id);
   }
 
   async create(dbName: string, demoData: Partial<Demo>): Promise<Demo> {
-    const model = this.getModelForDb(dbName);
-    const demo = new model(demoData);
-    return await demo.save();
+    // const model = this.getModelForDb(dbName);
+    // const demo = new model(demoData);
+    return await this.demoDaoService.save(dbName, demoData);
   }
 
   //redis-test
   async getData(): Promise<string | null> {
     // const value = await this.cacheManager.get<string>('nestjsRedisKey'); // ? Retrieve data from the cache
     // return value;
+    // handle error
     const value = await this.redisService.get('nestjsRedisKey', RedisDB.DB6);
     return value;
   }

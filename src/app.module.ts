@@ -9,6 +9,7 @@ import { KafkaModule } from './kafka/kafka.module';
 import { ConsumersModule } from './consumers/consumers.module';
 import { LoggerModule } from './logger/logger.module';
 import { MongodbModule } from './mongodb/mongodb.module';
+import { DaoModule } from './dao/dao.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MongodbModule } from './mongodb/mongodb.module';
     DemoModule,
     ConsumersModule,
     LoggerModule,
+    DaoModule,
   ],
   controllers: [AppController],
   providers: [AppService],
