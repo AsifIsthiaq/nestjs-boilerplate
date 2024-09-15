@@ -8,6 +8,7 @@ import {
   Logger as WinstonLogger,
 } from 'winston';
 const { combine, timestamp, printf, label } = format;
+import 'winston-daily-rotate-file';
 
 @Injectable()
 export class LoggerService {
@@ -21,26 +22,41 @@ export class LoggerService {
     const customFormat = printf(({ level, label, message, timestamp }) => {
       return `${timestamp} ${label} [${level}]: ${message}`;
     });
+    const serviceName = this.configService.get<string>(
+      'SERVICE_NAME',
+      'NESTAPP',
+    );
+    const logFilePath = `${this.configService.get<string>(
+      'LOG_FILE_PATH',
+      'log',
+    )}/${serviceName}`;
 
     return {
       level: this.configService.get<string>('LOG_LEVEL', 'info'),
       format: combine(
         label({
-          label: this.configService.get<string>('SERVICE_NAME', 'NESTAPP'),
+          label: serviceName,
         }),
         timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         customFormat,
       ),
       transports: [
-        new transports.File({
-          filename: this.configService.get<string>(
-            'LOG_FILE_PATH',
-            '/var/log/aheevaccs/any-api-connector/nest-app.log',
-          ),
+        new transports.DailyRotateFile({
+          filename: `${logFilePath}-%DATE%.log`,
+          datePattern: 'YYYY-MM-DD',
+          zippedArchive: false,
+          maxSize: '100m', // Max log file size before rotating
+          maxFiles: this.configService.get<string>('LOG_FILE_MAX_LIMIT', '5'),
+          createSymlink: true, // Creates a symlink for the most recent log
+          symlinkName: `${serviceName}.log`, // Symlink name for current log
+          format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })),
         }),
         new transports.Console({
           format: combine(timestamp({ format: 'YYYY-MM-DD HH:mm:ss' })),
         }),
+        // new transports.File({
+        //   filename: logFilePath+'.log',
+        // }),
       ],
     };
   }
