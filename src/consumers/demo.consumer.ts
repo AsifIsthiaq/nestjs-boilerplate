@@ -41,7 +41,8 @@ export class DemoConsumer implements OnModuleInit {
           this.handleKafkaMessage(consumer, topic, partition, message);
         },
       });
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       this.logger.error('Error while running Kafka consumer');
     }
   }
@@ -54,7 +55,8 @@ export class DemoConsumer implements OnModuleInit {
   ) {
     try {
       await this.processMessage(topic, partition, message);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       this.logger.error(
         `Error while processing message from Kafka Topic: ${topic}, ${message.key?.toString() ? 'Key: ' + message.key?.toString() : ''} || Message: `,
         message.value?.toString(),
@@ -105,7 +107,8 @@ export class DemoConsumer implements OnModuleInit {
       this.logger.info(
         `Committed offset ${(Number(offset) + 1).toString()} for topic: ${topic}, partition: ${partition}`,
       );
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new KafkaError(
         `Error committing offset for topic: ${topic}, partition: ${partition}`,
       );
@@ -117,7 +120,8 @@ export class DemoConsumer implements OnModuleInit {
     const messageValue = message.value?.toString();
     try {
       parsedValue = JSON.parse(messageValue);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       parsedValue = messageValue;
     }
     this.logger.debug('Parsed Kafka Message:', parsedValue);

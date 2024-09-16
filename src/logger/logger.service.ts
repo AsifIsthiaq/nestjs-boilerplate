@@ -91,7 +91,7 @@ export class LoggerService {
     );
   }
 
-  private getFormatedMetaStr(meta: any[]): String {
+  private getFormatedMetaStr(meta: any[]): string {
     if (!meta || meta.length === 0) return '';
     return meta
       .map((item) => (typeof item === 'object' ? JSON.stringify(item) : item))

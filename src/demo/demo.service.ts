@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 // import { InjectConnection } from '@nestjs/mongoose';
 import { Demo } from '../schemas/demo.shema';
 import { CreateDemoDto } from '../dto/create-demo.dto';

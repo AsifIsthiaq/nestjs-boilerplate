@@ -66,7 +66,8 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
   async produce(record: ProducerRecord): Promise<void> {
     try {
       await this.producer.send(record);
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new KafkaError('Unable to send message to Kafka');
     }
   }
@@ -86,7 +87,8 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
         topics,
       );
       return consumer;
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       throw new KafkaError('Unable to connect to Kafka consumer');
     }
   }

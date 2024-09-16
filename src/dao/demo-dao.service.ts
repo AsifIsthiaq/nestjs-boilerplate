@@ -19,7 +19,7 @@ export class DemoDaoService {
       const model = this.getModel(dbName);
       const demo = new model(data);
       await demo.save();
-      let demoData: any = { ...demo.toObject() };
+      const demoData: any = { ...demo.toObject() };
       delete demoData['__v'];
       return demoData;
     } catch (error) {
