@@ -38,26 +38,36 @@ export class DemoConsumer implements OnModuleInit {
       await consumer.run({
         autoCommit: false,
         eachMessage: async ({ topic, partition, message }) => {
-          try {
-            await this.processMessage(topic, partition, message);
-            await this.delay(2000);
-            //Todo: commit if there is any error while processing
-            await this.commitOffsets(
-              consumer,
-              topic,
-              partition,
-              message.offset,
-            );
-          } catch (error) {
-            this.logger.error(
-              `Error while processing message from Kafka Topic: ${topic} || Message: `,
-              message.value?.toString(),
-            );
-          }
+          this.handleKafkaMessage(consumer, topic, partition, message);
         },
       });
     } catch (error) {
-      throw new KafkaError('Error while running Kafka consumer');
+      this.logger.error('Error while running Kafka consumer');
+    }
+  }
+
+  private async handleKafkaMessage(
+    consumer: Consumer,
+    topic: string,
+    partition: number,
+    message: any,
+  ) {
+    try {
+      await this.processMessage(topic, partition, message);
+    } catch (error) {
+      this.logger.error(
+        `Error while processing message from Kafka Topic: ${topic}, ${message.key?.toString() ? 'Key: ' + message.key?.toString() : ''} || Message: `,
+        message.value?.toString(),
+      );
+    }
+
+    try {
+      await this.commitOffsets(consumer, topic, partition, message.offset);
+    } catch (error) {
+      this.logger.error(
+        `Failed to commit offset for topic: ${topic}, partition: ${partition}, ${message.key?.toString() ? 'Key: ' + message.key?.toString() : ''}`,
+        error,
+      );
     }
   }
 
@@ -67,18 +77,15 @@ export class DemoConsumer implements OnModuleInit {
     message: any,
   ): Promise<void> {
     const parsedMsg: any = this.parseKafkaMessage(message);
-    this.logger.info('Message from Kafka: ', {
-      key: message.key?.toString(),
-      value: parsedMsg,
-      headers: message.headers,
-    });
-    const logMessage = {
-      source: 'demo-consumer',
-      msg: parsedMsg,
-      partition: partition.toString(),
-      topic: topic.toString(),
-    };
-    this.logger.info(logMessage);
+    this.logger.info(
+      `Message from Kafka[topic: ${topic}, partition:${partition}, offset:${message.offset}]: `,
+      {
+        key: message.key?.toString(),
+        value: parsedMsg,
+        headers: message.headers,
+      },
+    );
+    await this.delay(3000);
   }
 
   private async commitOffsets(
@@ -99,10 +106,6 @@ export class DemoConsumer implements OnModuleInit {
         `Committed offset ${(Number(offset) + 1).toString()} for topic: ${topic}, partition: ${partition}`,
       );
     } catch (error) {
-      this.logger.error(
-        `Failed to commit offset for topic: ${topic}, partition: ${partition}`,
-        error,
-      );
       throw new KafkaError(
         `Error committing offset for topic: ${topic}, partition: ${partition}`,
       );

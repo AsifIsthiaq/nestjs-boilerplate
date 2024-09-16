@@ -81,7 +81,7 @@ export class KafkaService implements OnModuleInit, OnApplicationShutdown {
       consumer.subscribe(topics);
       this.consumers.push(consumer);
       this.logger.info(
-        'Successfully connected to Kafka consumer',
+        'Successfully connected to Kafka consumer groupId:',
         groupId,
         topics,
       );
