@@ -61,11 +61,15 @@ export class DemoService {
   //kafka-test
   async publish() {
     this.logger.info('publishing');
+    const dataToPublish = JSON.stringify({
+      data: 'this is emplotyee create: ' + Math.floor(Math.random() * 101),
+    });
     await this.kafkaService.produce({
       topic: DEMO_PRODUCER_TOPIC,
       messages: [
         {
-          value: 'this is emplotyee create: ' + Math.floor(Math.random() * 101),
+          key: 'kafkakey',
+          value: dataToPublish,
         },
       ],
     });

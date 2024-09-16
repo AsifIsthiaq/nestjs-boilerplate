@@ -38,9 +38,22 @@ export class DemoConsumer implements OnModuleInit {
       await consumer.run({
         autoCommit: false,
         eachMessage: async ({ topic, partition, message }) => {
-          await this.processMessage(topic, partition, message);
-          await this.delay(2000);
-          await this.commitOffsets(consumer, topic, partition, message.offset);
+          try {
+            await this.processMessage(topic, partition, message);
+            await this.delay(2000);
+            //Todo: commit if there is any error while processing
+            await this.commitOffsets(
+              consumer,
+              topic,
+              partition,
+              message.offset,
+            );
+          } catch (error) {
+            this.logger.error(
+              `Error while processing message from Kafka Topic: ${topic} || Message: `,
+              message.value?.toString(),
+            );
+          }
         },
       });
     } catch (error) {
@@ -53,9 +66,15 @@ export class DemoConsumer implements OnModuleInit {
     partition: number,
     message: any,
   ): Promise<void> {
+    const parsedMsg: any = this.parseKafkaMessage(message);
+    this.logger.info('Message from Kafka: ', {
+      key: message.key?.toString(),
+      value: parsedMsg,
+      headers: message.headers,
+    });
     const logMessage = {
       source: 'demo-consumer',
-      msg: message.value?.toString(),
+      msg: parsedMsg,
       partition: partition.toString(),
       topic: topic.toString(),
     };
@@ -88,6 +107,18 @@ export class DemoConsumer implements OnModuleInit {
         `Error committing offset for topic: ${topic}, partition: ${partition}`,
       );
     }
+  }
+
+  parseKafkaMessage(message: any): any {
+    let parsedValue: any;
+    const messageValue = message.value?.toString();
+    try {
+      parsedValue = JSON.parse(messageValue);
+    } catch (error) {
+      parsedValue = messageValue;
+    }
+    this.logger.debug('Parsed Kafka Message:', parsedValue);
+    return parsedValue;
   }
 
   private async delay(ms: number): Promise<void> {
