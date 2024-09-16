@@ -13,18 +13,7 @@ export class DemoConsumer implements OnModuleInit {
   constructor(
     private readonly kafkaService: KafkaService,
     private readonly logger: LoggerService,
-  ) {
-    // const list:any= {name:'asif', age:3};
-    // this.logger.info(list)
-    // this.logger.info([1,2,4,5])
-    // this.logger.info("mixed obj", list)
-    // this.logger.info("NO META")
-    // this.logger.info("NO META", "asif", 9, "Ist")
-    // this.logger.info("hello asif", {name:'asif', age:3})
-    // this.logger.info("asif3 list ", [1,23,4]);
-    // this.logger.info("asif3 list ", [1,23,{name:'asif'},'sdas']);
-    // this.logger.info("asif3 list ", [1,23,{name:'asif'},'sdas'], [1,23,{name:'asif'},'sdas'], {name:'asif', age:3},  "ASIFSISS");
-  }
+  ) {}
 
   async onModuleInit() {
     try {
